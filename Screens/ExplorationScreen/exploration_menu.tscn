@@ -1,0 +1,589 @@
+[gd_scene load_steps=6 format=3 uid="uid://bfiam5foy2yfk"]
+
+[ext_resource type="Script" path="res://Screens/Cursor.gd" id="1_5t73v"]
+[ext_resource type="Script" path="res://Screens/ExplorationScreen/exploration_menu.gd" id="1_7kpt8"]
+[ext_resource type="Script" path="res://Screens/menu_item.gd" id="3_uvekh"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mctgi"]
+font_size = 50
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_u5uep"]
+font_size = 40
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[node name="ExplorationMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7kpt8")
+
+[node name="Background" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Cursor" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2000.0
+offset_top = -740.0
+offset_right = 2000.0
+offset_bottom = -690.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.266667, 0, 0.933333, 1)
+script = ExtResource("1_5t73v")
+current_group = "exploration_menu_base_menu_node"
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="Cursor"]
+position = Vector2(2000, 29)
+amount = 200
+emission_shape = 3
+emission_rect_extents = Vector2(1500, 1)
+particle_flag_align_y = true
+gravity = Vector2(0, 1)
+scale_amount_min = 0.0
+scale_amount_max = 34.06
+color = Color(0.419608, 0, 0.603922, 1)
+
+[node name="Cursor2" type="ColorRect" parent="Cursor"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2000.0
+offset_top = -25.0
+offset_right = 2000.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.266667, 0, 0.933333, 1)
+
+[node name="Gem" type="ColorRect" parent="Cursor"]
+layout_mode = 0
+offset_left = 1756.0
+offset_top = 7.0
+offset_right = 1796.0
+offset_bottom = 47.0
+pivot_offset = Vector2(20, 20)
+color = Color(0, 0, 0, 1)
+
+[node name="MenuPathNode" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MenuPathNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 100
+
+[node name="MenuPathLabel" type="Label" parent="MenuPathNode/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Menu"
+label_settings = SubResource("LabelSettings_mctgi")
+
+[node name="BaseMenuNode" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="BaseMenuNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 1600
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="BaseMenuNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BaseMenuNode/MarginContainer"]
+layout_mode = 2
+
+[node name="NotesLabel" type="Label" parent="BaseMenuNode/MarginContainer/VBoxContainer" groups=["exploration_menu_base_menu_node"]]
+layout_mode = 2
+text = "Notes"
+label_settings = SubResource("LabelSettings_u5uep")
+script = ExtResource("3_uvekh")
+
+[node name="MemoriesLabel" type="Label" parent="BaseMenuNode/MarginContainer/VBoxContainer" groups=["exploration_menu_base_menu_node"]]
+layout_mode = 2
+text = "Memories"
+label_settings = SubResource("LabelSettings_u5uep")
+script = ExtResource("3_uvekh")
+
+[node name="InventoryLabel" type="Label" parent="BaseMenuNode/MarginContainer/VBoxContainer" groups=["exploration_menu_base_menu_node"]]
+layout_mode = 2
+text = "Inventory"
+label_settings = SubResource("LabelSettings_u5uep")
+script = ExtResource("3_uvekh")
+
+[node name="EquipmentLabel" type="Label" parent="BaseMenuNode/MarginContainer/VBoxContainer" groups=["exploration_menu_base_menu_node"]]
+layout_mode = 2
+text = "Equipment"
+label_settings = SubResource("LabelSettings_u5uep")
+script = ExtResource("3_uvekh")
+
+[node name="SettingsLabel" type="Label" parent="BaseMenuNode/MarginContainer/VBoxContainer" groups=["exploration_menu_base_menu_node"]]
+layout_mode = 2
+text = "Settings"
+label_settings = SubResource("LabelSettings_u5uep")
+script = ExtResource("3_uvekh")
+
+[node name="SaveLabel" type="Label" parent="BaseMenuNode/MarginContainer/VBoxContainer" groups=["exploration_menu_base_menu_node"]]
+layout_mode = 2
+text = "Save"
+label_settings = SubResource("LabelSettings_u5uep")
+script = ExtResource("3_uvekh")
+
+[node name="QuitLabel" type="Label" parent="BaseMenuNode/MarginContainer/VBoxContainer" groups=["exploration_menu_base_menu_node"]]
+layout_mode = 2
+text = "Quit"
+label_settings = SubResource("LabelSettings_u5uep")
+script = ExtResource("3_uvekh")
+
+[node name="ReturnLabel" type="Label" parent="BaseMenuNode/MarginContainer/VBoxContainer" groups=["exploration_menu_base_menu_node"]]
+layout_mode = 2
+text = "Return"
+label_settings = SubResource("LabelSettings_u5uep")
+script = ExtResource("3_uvekh")
+
+[node name="NotesNode" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="NotesNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 700
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 1200
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="NotesNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NotesNode/MarginContainer"]
+layout_mode = 2
+
+[node name="NotesLabel" type="Label" parent="NotesNode/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Notes: This is the notes window and I'm not sure how it will work yet..."
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+
+[node name="ReturnLabel" type="Label" parent="NotesNode/MarginContainer" groups=["exploration_menu_notes_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+script = ExtResource("3_uvekh")
+
+[node name="MemoriesNode" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MemoriesNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 700
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 1200
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="MemoriesNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MemoriesNode/MarginContainer"]
+layout_mode = 2
+
+[node name="MemoriesLabel" type="Label" parent="MemoriesNode/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Memories: This is the memories window and I'm not sure how it will work yet..."
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+
+[node name="ReturnLabel" type="Label" parent="MemoriesNode/MarginContainer" groups=["exploration_menu_memories_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+script = ExtResource("3_uvekh")
+
+[node name="InventoryNode" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="InventoryNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 700
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 1200
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="InventoryNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InventoryNode/MarginContainer"]
+layout_mode = 2
+
+[node name="InventoryLabel" type="Label" parent="InventoryNode/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Inventory: This is the inventory window and I'm not sure how it will work yet..."
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+
+[node name="ReturnLabel" type="Label" parent="InventoryNode/MarginContainer" groups=["exploration_menu_inventory_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+script = ExtResource("3_uvekh")
+
+[node name="EquipmentNode" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="EquipmentNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 700
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 1200
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="EquipmentNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="EquipmentNode/MarginContainer"]
+layout_mode = 2
+
+[node name="EquipmentLabel" type="Label" parent="EquipmentNode/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Equipment: This is the equipment window and I'm not sure how it will work yet..."
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+
+[node name="ReturnLabel" type="Label" parent="EquipmentNode/MarginContainer" groups=["exploration_menu_equipment_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+script = ExtResource("3_uvekh")
+
+[node name="SettingsNode" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SettingsNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 700
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 1200
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="SettingsNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsNode/MarginContainer"]
+layout_mode = 2
+
+[node name="SettingsLabel" type="Label" parent="SettingsNode/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Settings: This is the settings window and I'm not sure how it will work yet..."
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+
+[node name="ReturnLabel" type="Label" parent="SettingsNode/MarginContainer" groups=["exploration_menu_settings_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+script = ExtResource("3_uvekh")
+
+[node name="SaveNode" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SaveNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 700
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 1200
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="SaveNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SaveNode/MarginContainer"]
+layout_mode = 2
+
+[node name="SaveLabel" type="Label" parent="SaveNode/MarginContainer/VBoxContainer" groups=["exploration_menu_save_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Save"
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+script = ExtResource("3_uvekh")
+
+[node name="ReturnLabel" type="Label" parent="SaveNode/MarginContainer" groups=["exploration_menu_save_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+script = ExtResource("3_uvekh")
+
+[node name="QuitNode" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="QuitNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 700
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 1200
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="QuitNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="QuitNode/MarginContainer"]
+layout_mode = 2
+
+[node name="QuitToMainMenuLabel" type="Label" parent="QuitNode/MarginContainer/VBoxContainer" groups=["exploration_menu_quit_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Quit to Main Menu"
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+script = ExtResource("3_uvekh")
+
+[node name="QuitGameLabel" type="Label" parent="QuitNode/MarginContainer/VBoxContainer" groups=["exploration_menu_quit_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Quit Game"
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+script = ExtResource("3_uvekh")
+
+[node name="ReturnLabel" type="Label" parent="QuitNode/MarginContainer" groups=["exploration_menu_quit_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+script = ExtResource("3_uvekh")
+
+[node name="ConfirmationNode" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ConfirmationNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 1400
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 700
+theme_override_constants/margin_bottom = 450
+
+[node name="ColorRect" type="ColorRect" parent="ConfirmationNode/MarginContainer"]
+layout_mode = 2
+color = Color(0.619608, 0, 0.933333, 0.509804)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ConfirmationNode/MarginContainer"]
+layout_mode = 2
+
+[node name="ProceedLabel" type="Label" parent="ConfirmationNode/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Proceed?"
+label_settings = SubResource("LabelSettings_u5uep")
+autowrap_mode = 2
+
+[node name="NoLabel" type="Label" parent="ConfirmationNode/MarginContainer/VBoxContainer" groups=["exploration_menu_confirmation_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "No"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+script = ExtResource("3_uvekh")
+
+[node name="YesLabel" type="Label" parent="ConfirmationNode/MarginContainer/VBoxContainer" groups=["exploration_menu_confirmation_node"]]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_vertical = 8
+text = "Yes"
+label_settings = SubResource("LabelSettings_u5uep")
+horizontal_alignment = 2
+autowrap_mode = 2
+script = ExtResource("3_uvekh")
+
+[connection signal="item_selected" from="BaseMenuNode/MarginContainer/VBoxContainer/NotesLabel" to="." method="_on_notes_label_item_selected"]
+[connection signal="item_selected" from="BaseMenuNode/MarginContainer/VBoxContainer/MemoriesLabel" to="." method="_on_memories_label_item_selected"]
+[connection signal="item_selected" from="BaseMenuNode/MarginContainer/VBoxContainer/InventoryLabel" to="." method="_on_inventory_label_item_selected"]
+[connection signal="item_selected" from="BaseMenuNode/MarginContainer/VBoxContainer/EquipmentLabel" to="." method="_on_equipment_label_item_selected"]
+[connection signal="item_selected" from="BaseMenuNode/MarginContainer/VBoxContainer/SettingsLabel" to="." method="_on_settings_label_item_selected"]
+[connection signal="item_selected" from="BaseMenuNode/MarginContainer/VBoxContainer/SaveLabel" to="." method="_on_save_label_item_selected"]
+[connection signal="item_selected" from="BaseMenuNode/MarginContainer/VBoxContainer/QuitLabel" to="." method="_on_quit_label_item_selected"]
+[connection signal="item_selected" from="BaseMenuNode/MarginContainer/VBoxContainer/ReturnLabel" to="." method="_on_return_label_item_selected"]
+[connection signal="item_selected" from="NotesNode/MarginContainer/ReturnLabel" to="." method="_on_submenu_return_label_item_selected"]
+[connection signal="item_selected" from="MemoriesNode/MarginContainer/ReturnLabel" to="." method="_on_submenu_return_label_item_selected"]
+[connection signal="item_selected" from="InventoryNode/MarginContainer/ReturnLabel" to="." method="_on_submenu_return_label_item_selected"]
+[connection signal="item_selected" from="EquipmentNode/MarginContainer/ReturnLabel" to="." method="_on_submenu_return_label_item_selected"]
+[connection signal="item_selected" from="SettingsNode/MarginContainer/ReturnLabel" to="." method="_on_submenu_return_label_item_selected"]
+[connection signal="item_selected" from="SaveNode/MarginContainer/VBoxContainer/SaveLabel" to="." method="_on_save_label"]
+[connection signal="item_selected" from="SaveNode/MarginContainer/ReturnLabel" to="." method="_on_submenu_return_label_item_selected"]
+[connection signal="text_sent" from="QuitNode/MarginContainer/VBoxContainer/QuitToMainMenuLabel" to="." method="_on_quit_game_labels_text_sent"]
+[connection signal="text_sent" from="QuitNode/MarginContainer/VBoxContainer/QuitGameLabel" to="." method="_on_quit_game_labels_text_sent"]
+[connection signal="text_sent" from="QuitNode/MarginContainer/ReturnLabel" to="." method="_on_return_label_text_sent"]
+[connection signal="item_selected" from="ConfirmationNode/MarginContainer/VBoxContainer/NoLabel" to="." method="_on_quit_label_item_selected"]
+[connection signal="item_selected" from="ConfirmationNode/MarginContainer/VBoxContainer/YesLabel" to="." method="_on_yes_label_item_selected"]

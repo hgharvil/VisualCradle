@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3 uid="uid://cnag6dstwg8xf"]
+
+[ext_resource type="Script" path="res://Objects/3DTile/3d_tile.gd" id="1_dxe4h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2xfee"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xpepb"]
+material = SubResource("StandardMaterial3D_2xfee")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_t4tj8"]
+data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7lgox"]
+albedo_color = Color(0.211765, 0.211765, 0.211765, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_sk27w"]
+material = SubResource("StandardMaterial3D_7lgox")
+size = Vector2(0.9, 0.9)
+
+[node name="3DTile" type="StaticBody3D"]
+script = ExtResource("1_dxe4h")
+
+[node name="CubeMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_xpepb")
+
+[node name="CubeCollision" type="CollisionShape3D" parent="."]
+shape = SubResource("ConcavePolygonShape3D_t4tj8")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(0.707107, 0.707107, 0, 3.09086e-08, -3.09086e-08, 1, 0.707107, -0.707107, -4.37114e-08, 0, 0.51, 0)
+billboard = 1
+no_depth_test = true
+text = "N0"
+font_size = 100
+outline_size = 15
+
+[node name="Square" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.505, 0)
+mesh = SubResource("PlaneMesh_sk27w")

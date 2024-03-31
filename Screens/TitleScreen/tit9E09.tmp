@@ -1,0 +1,344 @@
+[gd_scene load_steps=20 format=3 uid="uid://cko4xvaj57tp3"]
+
+[ext_resource type="Script" path="res://Screens/TitleScreen/Cursor.gd" id="1_os114"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/title_screen.gd" id="1_uvw41"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/main_menu_item.gd" id="2_4li3a"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/Sphere.gd" id="3_8ilj0"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/DirectionalLight3D.gd" id="3_ni731"]
+[ext_resource type="Texture2D" uid="uid://cpaym0gh63ac7" path="res://Assets/Images/UV Grid.png" id="3_rwe15"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/SettingsMenuNode.gd" id="4_531gn"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/Satellite.gd" id="4_mrecw"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/settings_value_item.gd" id="5_80dfu"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7qi36"]
+sky_top_color = Color(0, 0, 0, 1)
+sky_horizon_color = Color(0.5, 0.5, 0.5, 1)
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0.5, 0.5, 0.5, 1)
+
+[sub_resource type="Sky" id="Sky_qydfy"]
+sky_material = SubResource("ProceduralSkyMaterial_7qi36")
+
+[sub_resource type="Environment" id="Environment_bptrg"]
+background_mode = 1
+sky = SubResource("Sky_qydfy")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="LabelSettings" id="LabelSettings_qskb6"]
+font_size = 24
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_lq443"]
+font_size = 90
+
+[sub_resource type="LabelSettings" id="LabelSettings_oppjv"]
+font_size = 40
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2rk0s"]
+albedo_texture = ExtResource("3_rwe15")
+
+[sub_resource type="SphereMesh" id="SphereMesh_842p2"]
+material = SubResource("StandardMaterial3D_2rk0s")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_isxds"]
+albedo_texture = ExtResource("3_rwe15")
+
+[sub_resource type="BoxMesh" id="BoxMesh_pnmtj"]
+material = SubResource("StandardMaterial3D_isxds")
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_uvw41")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bptrg")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="2DElements" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Cursor" type="ColorRect" parent="2DElements" node_paths=PackedStringArray("current_menu_node")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2000.0
+offset_top = -740.0
+offset_right = 2000.0
+offset_bottom = -690.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.266667, 0, 0.933333, 1)
+script = ExtResource("1_os114")
+current_menu_node = NodePath("../StartNode")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="2DElements/Cursor"]
+position = Vector2(2000, 29)
+amount = 200
+emission_shape = 3
+emission_rect_extents = Vector2(1500, 1)
+particle_flag_align_y = true
+gravity = Vector2(0, 1)
+scale_amount_min = 0.0
+scale_amount_max = 34.06
+color = Color(0.419608, 0, 0.603922, 1)
+
+[node name="Cursor2" type="ColorRect" parent="2DElements/Cursor"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2000.0
+offset_top = -25.0
+offset_right = 2000.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.266667, 0, 0.933333, 1)
+
+[node name="Player" type="ColorRect" parent="2DElements/Cursor"]
+layout_mode = 0
+offset_left = 1756.0
+offset_top = 7.0
+offset_right = 1796.0
+offset_bottom = 47.0
+pivot_offset = Vector2(20, 20)
+color = Color(0, 0, 0, 1)
+
+[node name="TitleNode" type="Control" parent="2DElements"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LicenseLabel" type="Label" parent="2DElements/TitleNode"]
+layout_mode = 2
+offset_left = 736.0
+offset_top = 1016.0
+offset_right = 1183.0
+offset_bottom = 1050.0
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "2024 Henry Harvil. All Rights Reserved."
+label_settings = SubResource("LabelSettings_qskb6")
+
+[node name="TitleLabel" type="Label" parent="2DElements/TitleNode"]
+layout_mode = 2
+offset_left = 678.0
+offset_top = 300.0
+offset_right = 1241.0
+offset_bottom = 424.003
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Visual Cradle"
+label_settings = SubResource("LabelSettings_lq443")
+
+[node name="StartNode" type="Control" parent="2DElements"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PressStartLabel" type="Label" parent="2DElements/StartNode"]
+layout_mode = 2
+offset_left = 786.0
+offset_top = 647.0
+offset_right = 1133.0
+offset_bottom = 702.0
+size_flags_horizontal = 4
+text = "Press Start to Play"
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("2_4li3a")
+
+[node name="MainMenuNode" type="Control" parent="2DElements"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameStartLabel" type="Label" parent="2DElements/MainMenuNode"]
+layout_mode = 2
+offset_left = 1203.0
+offset_top = 700.0
+offset_right = 1420.0
+offset_bottom = 755.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Game Start"
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("2_4li3a")
+
+[node name="SettingsLabel" type="Label" parent="2DElements/MainMenuNode"]
+layout_mode = 2
+offset_left = 1266.0
+offset_top = 762.0
+offset_right = 1420.0
+offset_bottom = 817.0
+size_flags_horizontal = 8
+text = "Settings"
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("2_4li3a")
+
+[node name="QuitLabel" type="Label" parent="2DElements/MainMenuNode"]
+layout_mode = 2
+offset_left = 1337.0
+offset_top = 825.0
+offset_right = 1420.0
+offset_bottom = 880.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Quit"
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("2_4li3a")
+
+[node name="SettingsMenuNode" type="Control" parent="2DElements"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_531gn")
+
+[node name="Option1" type="Label" parent="2DElements/SettingsMenuNode"]
+layout_mode = 2
+offset_left = 1170.0
+offset_top = 700.0
+offset_right = 1356.0
+offset_bottom = 755.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Option 1: "
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("2_4li3a")
+
+[node name="Option2" type="Label" parent="2DElements/SettingsMenuNode"]
+layout_mode = 2
+offset_left = 1170.0
+offset_top = 759.0
+offset_right = 1356.0
+offset_bottom = 814.0
+size_flags_horizontal = 8
+text = "Option 2: "
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("2_4li3a")
+
+[node name="Save and Return" type="Label" parent="2DElements/SettingsMenuNode"]
+layout_mode = 2
+offset_left = 1106.0
+offset_top = 818.0
+offset_right = 1420.0
+offset_bottom = 873.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Save and Return"
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("2_4li3a")
+
+[node name="Return" type="Label" parent="2DElements/SettingsMenuNode"]
+layout_mode = 2
+offset_left = 1288.0
+offset_top = 877.0
+offset_right = 1420.0
+offset_bottom = 932.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("2_4li3a")
+
+[node name="SettingsValuesNode2" type="Control" parent="2DElements"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Value1" type="Label" parent="2DElements/SettingsValuesNode2"]
+layout_mode = 2
+offset_left = 1360.0
+offset_top = 700.0
+offset_right = 1420.0
+offset_bottom = 755.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Off"
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("5_80dfu")
+
+[node name="Value2" type="Label" parent="2DElements/SettingsValuesNode2"]
+layout_mode = 2
+offset_left = 1360.0
+offset_top = 759.0
+offset_right = 1420.0
+offset_bottom = 814.0
+size_flags_horizontal = 8
+text = "Off"
+label_settings = SubResource("LabelSettings_oppjv")
+script = ExtResource("5_80dfu")
+
+[node name="3DElements" type="Node3D" parent="."]
+
+[node name="SpherePivot" type="Node3D" parent="3DElements"]
+transform = Transform3D(0.753442, 0.435, 0, -0.435, 0.753442, 0, 0, 0, 0.87, 0, 0, -3)
+
+[node name="Sphere" type="MeshInstance3D" parent="3DElements/SpherePivot"]
+mesh = SubResource("SphereMesh_842p2")
+script = ExtResource("3_8ilj0")
+
+[node name="SattelitePivot" type="Node3D" parent="3DElements/SpherePivot/Sphere"]
+transform = Transform3D(0.562297, -0.433134, 0.904099, 0.988263, 0.413551, -0.41652, -0.168329, 0.981096, 0.574713, 0, 0, 0.689655)
+
+[node name="Satellite" type="MeshInstance3D" parent="3DElements/SpherePivot/Sphere/SattelitePivot"]
+transform = Transform3D(0.065, 0, 0, 0, 0.065, 0, 0, 0, 0.065, 0, 0, 0)
+mesh = SubResource("BoxMesh_pnmtj")
+script = ExtResource("4_mrecw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="3DElements"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+shadow_enabled = true
+sky_mode = 1
+script = ExtResource("3_ni731")
+
+[node name="Camera3D" type="Camera3D" parent="3DElements"]
+projection = 1
+
+[connection signal="item_selected" from="2DElements/StartNode/PressStartLabel" to="." method="_on_press_start_label_item_selected"]
+[connection signal="item_selected" from="2DElements/MainMenuNode/GameStartLabel" to="." method="_on_game_start_label_item_selected"]
+[connection signal="item_selected" from="2DElements/MainMenuNode/SettingsLabel" to="." method="_on_settings_label_item_selected"]
+[connection signal="item_selected" from="2DElements/MainMenuNode/QuitLabel" to="." method="_on_quit_label_item_selected"]
+[connection signal="item_selected" from="2DElements/SettingsMenuNode/Option1" to="2DElements/SettingsMenuNode" method="_on_option_1_item_selected"]
+[connection signal="item_selected" from="2DElements/SettingsMenuNode/Option2" to="2DElements/SettingsMenuNode" method="_on_option_2_item_selected"]
+[connection signal="item_selected" from="2DElements/SettingsMenuNode/Save and Return" to="2DElements/SettingsMenuNode" method="_on_save_and_return_item_selected"]
+[connection signal="item_selected" from="2DElements/SettingsMenuNode/Return" to="2DElements/SettingsMenuNode" method="_on_return_item_selected"]

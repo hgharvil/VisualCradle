@@ -1,0 +1,1192 @@
+[gd_scene load_steps=21 format=3 uid="uid://ww5qtknasbte"]
+
+[ext_resource type="Script" path="res://Screens/FileScreen/file_screen.gd" id="1_oh006"]
+[ext_resource type="Script" path="res://Screens/menu_item.gd" id="2_jmjlu"]
+[ext_resource type="Texture2D" uid="uid://cpaym0gh63ac7" path="res://Assets/Images/UV Grid.png" id="4_gs8ip"]
+[ext_resource type="Script" path="res://Screens/FileScreen/Node3D.gd" id="4_rr6xf"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/Sphere.gd" id="5_0bedr"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/Satellite.gd" id="6_dev74"]
+[ext_resource type="Script" path="res://Screens/TitleScreen/DirectionalLight3D.gd" id="7_3lt33"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ccjrn"]
+sky_top_color = Color(0, 0, 0, 1)
+sky_horizon_color = Color(0.5, 0.5, 0.5, 1)
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0.5, 0.5, 0.5, 1)
+
+[sub_resource type="Sky" id="Sky_qydfy"]
+sky_material = SubResource("ProceduralSkyMaterial_ccjrn")
+
+[sub_resource type="Environment" id="Environment_ugdre"]
+background_mode = 1
+sky = SubResource("Sky_qydfy")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="GDScript" id="GDScript_fwtl8"]
+script/source = "extends ColorRect
+
+signal b_selected
+
+@onready var gem: ColorRect = $Gem
+@export var current_group : String
+@onready var cursor_vertical: ColorRect = $\"../CursorVertical\"
+
+var new_cursor_position : Vector2
+var new_cursor_vertical_position : Vector2
+var new_cursor_size : Vector2
+var new_cursor_vertical_size : Vector2
+var new_gem_position : Vector2
+@export var cursor_index := 0
+var options : Array
+
+func _ready() -> void:
+	update_options()
+	update_cursor_pos()
+
+func update_options() -> void:
+	#print(\"current_group: \",current_group)
+	#print(\"options (before): \",options)
+	options = get_tree().get_nodes_in_group(current_group)
+	#print(\"options (after): \",options)
+
+func update_cursor_pos():
+	if cursor_index >= 0 and cursor_index < options.size():
+		new_cursor_position = Vector2(position.x,options[cursor_index].global_position.y)
+		new_cursor_size = Vector2(size.x, options[cursor_index].get_line_height())
+		new_gem_position = Vector2(options[cursor_index].global_position.x + 970, new_cursor_size.y -47)
+		var tween_cursor = create_tween().set_parallel(true)
+		tween_cursor.tween_property(self, \"global_position\", new_cursor_position, 0.5)
+		tween_cursor.tween_property(self, \"size\", new_cursor_size, 0.5)
+		tween_cursor.tween_property(gem, \"position\", new_gem_position, 0.5)
+		if current_group == \"file_screen_name_input_node\":
+			var tween_cursor3 = create_tween().set_parallel(true)
+			new_cursor_vertical_position = Vector2(options[cursor_index].global_position.x-5,options[cursor_index].global_position.y)
+			new_cursor_vertical_size = Vector2(options[cursor_index].get_line_height(), cursor_vertical.y)
+			tween_cursor3.tween_property(cursor_vertical, \"global_position\", new_cursor_vertical_position, 0.5)
+			tween_cursor3.tween_property(cursor_vertical, \"size\", new_cursor_vertical_size, 0.5)
+
+func _process(delta: float) -> void:
+	var input := Vector2.ZERO
+	if Input.is_action_just_pressed(\"control_up\"):
+		input.y -= 1
+		#cursor_index -= 1
+	if Input.is_action_just_pressed(\"control_down\"):
+		input.y += 1
+		#cursor_index += 1
+	if Input.is_action_just_pressed(\"control_left\"):
+		input.x -= 1
+	if Input.is_action_just_pressed(\"control_right\"):
+		input.x += 1
+	
+	
+	if current_group == \"file_screen_name_input_node\":
+		cursor_vertical.visible = true
+		if cursor_index + input.x + input.y * 13 < 0:
+			cursor_index = 0
+		elif cursor_index + input.x + input.y * 13 >= 68:
+			cursor_index = 67
+		else:
+			cursor_index = cursor_index + input.x + input.y * 13
+	else:
+		cursor_vertical.visible = false
+		cursor_index += input.y
+		if cursor_index< 0:
+			cursor_index = options.size()-1
+		elif cursor_index >= options.size():
+			cursor_index = 0
+	
+	if Input.is_action_just_pressed(\"control_a\"):
+		options[cursor_index].item_select()
+		update_options()
+	if Input.is_action_just_pressed(\"control_b\"):
+		b_selected.emit()
+		update_options()
+	if Input.is_action_just_pressed(\"control_x\"):
+		print(\"cursor_index: \",cursor_index)
+		print(\"options[cursor_index].global_position.x: \", options[cursor_index].global_position.x)
+	
+	update_cursor_pos()
+	#print(cursor_index)
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_mx187"]
+font_size = 60
+
+[sub_resource type="LabelSettings" id="LabelSettings_6l7cs"]
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_pnol6"]
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_wcesm"]
+font_size = 50
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_answd"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2rk0s"]
+albedo_texture = ExtResource("4_gs8ip")
+
+[sub_resource type="SphereMesh" id="SphereMesh_luc8u"]
+material = SubResource("StandardMaterial3D_2rk0s")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_isxds"]
+albedo_texture = ExtResource("4_gs8ip")
+
+[sub_resource type="BoxMesh" id="BoxMesh_tpr0c"]
+material = SubResource("StandardMaterial3D_isxds")
+
+[node name="FileScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oh006")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ugdre")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="2DElements" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CursorVertical" type="ColorRect" parent="2DElements"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -2715.0
+offset_right = 25.0
+offset_bottom = 1285.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(25, 2000)
+color = Color(0.266667, 0, 0.933333, 1)
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="2DElements/CursorVertical"]
+position = Vector2(25, 2000)
+amount = 200
+emission_shape = 3
+emission_rect_extents = Vector2(1, 1500)
+particle_flag_align_y = true
+gravity = Vector2(0, 1)
+scale_amount_min = 0.0
+scale_amount_max = 47.8
+color = Color(0.419608, 0, 0.603922, 1)
+
+[node name="Cursor2" type="ColorRect" parent="2DElements/CursorVertical"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -2000.0
+offset_right = 25.0
+offset_bottom = 2000.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.266667, 0, 0.933333, 1)
+
+[node name="Gem2" type="ColorRect" parent="2DElements/CursorVertical"]
+layout_mode = 0
+offset_left = 1756.0
+offset_top = 7.0
+offset_right = 1796.0
+offset_bottom = 47.0
+pivot_offset = Vector2(20, 20)
+color = Color(0, 0, 0, 1)
+
+[node name="Cursor" type="ColorRect" parent="2DElements"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2000.0
+offset_top = -740.0
+offset_right = 2000.0
+offset_bottom = -690.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.266667, 0, 0.933333, 1)
+script = SubResource("GDScript_fwtl8")
+current_group = "file_screen_file_select_node"
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="2DElements/Cursor"]
+position = Vector2(2000, 29)
+amount = 200
+emission_shape = 3
+emission_rect_extents = Vector2(1500, 1)
+particle_flag_align_y = true
+gravity = Vector2(0, 1)
+scale_amount_min = 0.0
+scale_amount_max = 34.06
+color = Color(0.419608, 0, 0.603922, 1)
+
+[node name="Cursor2" type="ColorRect" parent="2DElements/Cursor"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2000.0
+offset_top = -25.0
+offset_right = 2000.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.266667, 0, 0.933333, 1)
+
+[node name="Gem" type="ColorRect" parent="2DElements/Cursor"]
+visible = false
+layout_mode = 0
+offset_left = 1756.0
+offset_top = 7.0
+offset_right = 1796.0
+offset_bottom = 47.0
+pivot_offset = Vector2(20, 20)
+color = Color(0, 0, 0, 1)
+
+[node name="FileSelectNode" type="Control" parent="2DElements"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="2DElements/FileSelectNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 150
+theme_override_constants/margin_top = 150
+theme_override_constants/margin_right = 150
+theme_override_constants/margin_bottom = 150
+
+[node name="FileSelectLabel" type="Label" parent="2DElements/FileSelectNode/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "File Select"
+label_settings = SubResource("LabelSettings_mx187")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="2DElements/FileSelectNode/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 72
+
+[node name="HBoxContainer1" type="HBoxContainer" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="File1" type="Label" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer1" groups=["file_screen_file_select_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "File 1: "
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="Data1" type="Label" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer1"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "No data"
+label_settings = SubResource("LabelSettings_6l7cs")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="File2" type="Label" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer2" groups=["file_screen_file_select_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "File 2: "
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="Data2" type="Label" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "No data"
+label_settings = SubResource("LabelSettings_6l7cs")
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="File3" type="Label" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer3" groups=["file_screen_file_select_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "File 3: "
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="Data3" type="Label" parent="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "No data"
+label_settings = SubResource("LabelSettings_6l7cs")
+
+[node name="Return" type="Label" parent="2DElements/FileSelectNode/MarginContainer" groups=["file_screen_file_select_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_pnol6")
+script = ExtResource("2_jmjlu")
+
+[node name="NameInputNode" type="Control" parent="2DElements"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="2DElements/NameInputNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 150
+theme_override_constants/margin_top = 150
+theme_override_constants/margin_right = 150
+theme_override_constants/margin_bottom = 150
+
+[node name="VBoxContainer" type="VBoxContainer" parent="2DElements/NameInputNode/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="NameInputLabel" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "File Name Input"
+label_settings = SubResource("LabelSettings_mx187")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="SaveNameLabel" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Save Name: "
+label_settings = SubResource("LabelSettings_wcesm")
+
+[node name="NameOutputLabel" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+label_settings = SubResource("LabelSettings_wcesm")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="OutputCharNumberLabel" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "0"
+label_settings = SubResource("LabelSettings_wcesm")
+
+[node name="NameOutputLabel" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "/20"
+label_settings = SubResource("LabelSettings_wcesm")
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 29
+
+[node name="VBoxContainer" type="GridContainer" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/h_separation = 44
+theme_override_constants/v_separation = 5
+columns = 13
+
+[node name="LetterLabel1" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "A"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel2" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "B"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel3" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "C"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel4" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "D"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel5" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "E"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel6" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "F"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel7" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "G"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel8" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "H"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel9" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "I"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel10" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "J"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel11" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "K"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel12" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "L"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel13" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "M"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel14" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "N"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel15" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "O"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel16" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "P"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel17" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "Q"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel18" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "R"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel19" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "S"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel20" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "T"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel21" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "U"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel22" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "V"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel23" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "W"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel24" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "X"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel25" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "Y"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel26" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "Z"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel27" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "a"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel28" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "b"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel29" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "c"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel30" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "d"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel31" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "e"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel32" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "f"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel33" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "g"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel34" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "h"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel35" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "i"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel36" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "j"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel37" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "k"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel38" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "l"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel39" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "m"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel40" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "n"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel41" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "o"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel42" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "p"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel43" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "q"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel44" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "r"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel45" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "s"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel46" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "t"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel47" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "u"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel48" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "v"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel49" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "w"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel50" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "x"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel51" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "y"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel52" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "z"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel53" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "1"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel54" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "2"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel55" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "3"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel56" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "4"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel57" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "5"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel58" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "6"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel59" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "7"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel60" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "8"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel61" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "9"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel62" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "0"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel63" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "."
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel64" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "-"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="LetterLabel65" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_answd")
+text = "_"
+label_settings = SubResource("LabelSettings_6l7cs")
+script = ExtResource("2_jmjlu")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_constants/separation = 165
+
+[node name="Backspace" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/HBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Backspace"
+label_settings = SubResource("LabelSettings_pnol6")
+script = ExtResource("2_jmjlu")
+
+[node name="Confirm" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/HBoxContainer" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Confirm"
+label_settings = SubResource("LabelSettings_pnol6")
+script = ExtResource("2_jmjlu")
+
+[node name="Return" type="Label" parent="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3" groups=["file_screen_name_input_node"]]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Return"
+label_settings = SubResource("LabelSettings_pnol6")
+script = ExtResource("2_jmjlu")
+
+[node name="3DElements3" type="Node3D" parent="."]
+
+[node name="Node3D" type="Node3D" parent="3DElements3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+script = ExtResource("4_rr6xf")
+
+[node name="SpherePivot1" type="Node3D" parent="3DElements3/Node3D"]
+transform = Transform3D(0.113137, -0.113137, 0, 0.113137, 0.113137, 0, 0, 0, 0.16, -0.2, 0.1, -1.4)
+
+[node name="Sphere" type="MeshInstance3D" parent="3DElements3/Node3D/SpherePivot1"]
+mesh = SubResource("SphereMesh_luc8u")
+script = ExtResource("5_0bedr")
+
+[node name="SattelitePivot" type="Node3D" parent="3DElements3/Node3D/SpherePivot1/Sphere"]
+transform = Transform3D(0.562297, -0.433134, 0.904099, 0.988263, 0.413551, -0.41652, -0.168329, 0.981096, 0.574713, 0, 0, 0.689655)
+
+[node name="Satellite" type="MeshInstance3D" parent="3DElements3/Node3D/SpherePivot1/Sphere/SattelitePivot"]
+transform = Transform3D(0.065, 0, 0, 0, 0.065, 0, 0, 0, 0.065, 0, 0, 0)
+mesh = SubResource("BoxMesh_tpr0c")
+script = ExtResource("6_dev74")
+
+[node name="SpherePivot2" type="Node3D" parent="3DElements3/Node3D"]
+transform = Transform3D(-0.035863, 0.08, -0.133843, 0.0207055, 0.138564, 0.0772741, 0.154548, 0, -0.041411, 0.2, -7.45058e-09, -0.0999999)
+
+[node name="Sphere" type="MeshInstance3D" parent="3DElements3/Node3D/SpherePivot2"]
+mesh = SubResource("SphereMesh_luc8u")
+script = ExtResource("5_0bedr")
+
+[node name="SattelitePivot" type="Node3D" parent="3DElements3/Node3D/SpherePivot2/Sphere"]
+transform = Transform3D(0.562297, -0.433134, 0.904099, 0.988263, 0.413551, -0.41652, -0.168329, 0.981096, 0.574713, 0, 0, 0.689655)
+
+[node name="Satellite" type="MeshInstance3D" parent="3DElements3/Node3D/SpherePivot2/Sphere/SattelitePivot"]
+transform = Transform3D(0.065, 0, 0, 0, 0.065, 0, 0, 0, 0.065, 0, 0, 0)
+mesh = SubResource("BoxMesh_tpr0c")
+script = ExtResource("6_dev74")
+
+[node name="SpherePivot3" type="Node3D" parent="3DElements3/Node3D"]
+transform = Transform3D(0.138564, 0.08, 0, -0.08, 0.138564, 0, 0, 0, 0.16, -0.2, -0.1, 1)
+
+[node name="Sphere" type="MeshInstance3D" parent="3DElements3/Node3D/SpherePivot3"]
+mesh = SubResource("SphereMesh_luc8u")
+script = ExtResource("5_0bedr")
+
+[node name="SattelitePivot" type="Node3D" parent="3DElements3/Node3D/SpherePivot3/Sphere"]
+transform = Transform3D(0.562297, -0.433134, 0.904099, 0.988263, 0.413551, -0.41652, -0.168329, 0.981096, 0.574713, 0, 0, 0.689655)
+
+[node name="Satellite" type="MeshInstance3D" parent="3DElements3/Node3D/SpherePivot3/Sphere/SattelitePivot"]
+transform = Transform3D(0.065, 0, 0, 0, 0.065, 0, 0, 0, 0.065, 0, 0, 0)
+mesh = SubResource("BoxMesh_tpr0c")
+script = ExtResource("6_dev74")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="3DElements3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+shadow_enabled = true
+sky_mode = 1
+script = ExtResource("7_3lt33")
+
+[node name="Camera3D" type="Camera3D" parent="3DElements3"]
+projection = 1
+
+[connection signal="item_selected" from="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer1/File1" to="." method="_on_file_1_item_selected"]
+[connection signal="item_selected" from="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer2/File2" to="." method="_on_file_2_item_selected"]
+[connection signal="item_selected" from="2DElements/FileSelectNode/MarginContainer/VBoxContainer/HBoxContainer3/File3" to="." method="_on_file_3_item_selected"]
+[connection signal="item_selected" from="2DElements/FileSelectNode/MarginContainer/Return" to="." method="_on_return_item_selected"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel1" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel2" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel3" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel4" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel5" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel6" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel7" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel8" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel9" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel10" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel11" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel12" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel13" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel14" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel15" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel16" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel17" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel18" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel19" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel20" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel21" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel22" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel23" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel24" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel25" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel26" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel27" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel28" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel29" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel30" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel31" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel32" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel33" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel34" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel35" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel36" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel37" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel38" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel39" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel40" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel41" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel42" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel43" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel44" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel45" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel46" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel47" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel48" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel49" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel50" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel51" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel52" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel53" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel54" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel55" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel56" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel57" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel58" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel59" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel60" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel61" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel62" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel63" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel64" to="." method="_on_letter_label_text_sent"]
+[connection signal="text_sent" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/VBoxContainer/LetterLabel65" to="." method="_on_letter_label_text_sent"]
+[connection signal="item_selected" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/HBoxContainer/Backspace" to="." method="_on_backspace_item_selected"]
+[connection signal="item_selected" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/HBoxContainer/Confirm" to="." method="_on_confirm_item_selected"]
+[connection signal="item_selected" from="2DElements/NameInputNode/MarginContainer/VBoxContainer/VBoxContainer3/Return" to="." method="_on_return_item_selected"]

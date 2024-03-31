@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=3 uid="uid://xui406d6mdha"]
+
+[ext_resource type="Script" path="res://Screens/ExplorationScreen/Map.gd" id="1_wltju"]
+[ext_resource type="Script" path="res://Screens/ExplorationScreen/Character.gd" id="2_5rwkf"]
+[ext_resource type="PackedScene" uid="uid://dcr24kcyh365m" path="res://Objects/Characters/debug_character.tscn" id="2_cpxnp"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_apcli"]
+sky_top_color = Color(1, 1, 1, 1)
+sky_horizon_color = Color(0.75, 0.75, 0.75, 1)
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0.75, 0.75, 0.75, 1)
+
+[sub_resource type="Sky" id="Sky_ahhvl"]
+sky_material = SubResource("ProceduralSkyMaterial_apcli")
+
+[sub_resource type="Environment" id="Environment_hwa4t"]
+background_mode = 2
+sky = SubResource("Sky_ahhvl")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_io7jt"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_5vybb"]
+material = SubResource("StandardMaterial3D_io7jt")
+size = Vector2(200, 200)
+
+[node name="ExplorationScreen" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.150384, -0.92878, -0.338753, -0.5, -0.224144, 0.836516, -0.852869, 0.295175, -0.430682, -1.72189e-07, 4, 3.03616e-08)
+light_energy = 3.0
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hwa4t")
+
+[node name="BackgroundFloor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+mesh = SubResource("PlaneMesh_5vybb")
+
+[node name="Map" type="Node3D" parent="."]
+script = ExtResource("1_wltju")
+
+[node name="Character" type="Node3D" parent="."]
+script = ExtResource("2_5rwkf")
+
+[node name="DebugCharacter" parent="Character" instance=ExtResource("2_cpxnp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5)
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0.5, 0, 0.5)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 100, 100)
+projection = 1
+fov = 4.0
+size = 5.0
